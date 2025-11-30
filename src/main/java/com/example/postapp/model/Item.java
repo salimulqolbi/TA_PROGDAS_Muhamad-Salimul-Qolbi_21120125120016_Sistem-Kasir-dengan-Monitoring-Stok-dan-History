@@ -5,12 +5,14 @@ public class Item {
     protected String name;
     protected double price;
     protected int stock;
+    protected String imgPath;
 
-    public Item (int id, String name, double price, int stock) {
+    public Item (int id, String name, double price, int stock, String imgPath) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
+        this.imgPath = imgPath;
     }
 
     public double getPrice() {
@@ -23,6 +25,14 @@ public class Item {
 
     public int getStock() {
         return stock;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
+    public String getImgPath() {
+        return imgPath;
     }
 
     public String getName() {
