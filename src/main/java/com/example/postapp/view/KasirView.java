@@ -207,6 +207,7 @@ public class KasirView {
             var tx = cartController.checkout();
             if (tx != null) {
                 updateCartPanel();
+                refreshProductGrid();
                 showAlert("Transaksi berhasil!\nTotal: Rp " + tx.getTotal());
             } else {
                 showAlert("Transaksi gagal. Cek stok atau keranjang kosong.");
@@ -240,5 +241,11 @@ public class KasirView {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.show();
+    }
+
+    private void refreshProductGrid() {
+        ScrollPane sp = (ScrollPane) layout.getCenter();
+        FlowPane grid = createProductGrid(sp);
+        sp.setContent(grid);
     }
 }
