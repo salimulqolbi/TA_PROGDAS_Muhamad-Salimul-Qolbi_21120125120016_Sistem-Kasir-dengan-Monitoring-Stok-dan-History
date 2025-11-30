@@ -1,6 +1,5 @@
 package com.example.postapp.view;
 
-import com.example.postapp.Launcher;
 import com.example.postapp.data.AppData;
 import com.example.postapp.model.Item;
 import javafx.geometry.Insets;

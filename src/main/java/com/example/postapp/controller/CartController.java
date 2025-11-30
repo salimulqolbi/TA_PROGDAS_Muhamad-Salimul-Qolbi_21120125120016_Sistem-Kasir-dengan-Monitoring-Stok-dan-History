@@ -4,7 +4,6 @@ import com.example.postapp.data.AppData;
 import com.example.postapp.model.CartItem;
 import com.example.postapp.model.Item;
 import com.example.postapp.model.TransactionItem;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;

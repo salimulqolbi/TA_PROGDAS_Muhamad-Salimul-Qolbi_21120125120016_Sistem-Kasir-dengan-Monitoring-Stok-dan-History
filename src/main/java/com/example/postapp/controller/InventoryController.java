@@ -5,8 +5,6 @@ import com.example.postapp.model.FoodItem;
 import com.example.postapp.model.Item;
 import com.example.postapp.model.NonFoodItem;
 
-import java.util.List;
-
 public class InventoryController {
 
     public void addItem(String name, double price, int stock, boolean isFood, String expDate, String imgPath){

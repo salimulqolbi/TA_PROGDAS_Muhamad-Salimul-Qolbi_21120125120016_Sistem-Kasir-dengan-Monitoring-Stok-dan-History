@@ -106,7 +106,6 @@ public class ManageView {
         Label formTitle = new Label("Tambah");
         formTitle.setFont(Font.font(16));
 
-        // FIELD INPUT
         TextField nameField = new TextField();
         nameField.setPromptText("Nama Barang");
 
