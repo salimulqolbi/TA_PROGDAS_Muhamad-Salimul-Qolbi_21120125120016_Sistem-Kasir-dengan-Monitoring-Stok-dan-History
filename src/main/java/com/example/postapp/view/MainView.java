@@ -50,13 +50,6 @@ public class MainView {
                 false
         );
 
-        VBox monitoringBtn = createNavItem(
-                "/images/monitoring.png",
-                "/images/monitoring_blue.png",
-                "Monitoring",
-                false
-        );
-
         VBox historyBtn = createNavItem(
                 "/images/history.png",
                 "/images/history_blue.png",
@@ -73,15 +66,11 @@ public class MainView {
             switchPage(manageBtn, new ManageView().getView());
         });
 
-        monitoringBtn.setOnMouseClicked(e -> {
-            switchPage(monitoringBtn, new MonitoringView().getView());
-        });
-
         historyBtn.setOnMouseClicked(e -> {
             switchPage(historyBtn, new HistoryView().getView());
         });
 
-        bottomNav.getChildren().addAll(kasirBtn, manageBtn, monitoringBtn, historyBtn);
+        bottomNav.getChildren().addAll(kasirBtn, manageBtn, historyBtn);
         rootLayout.setBottom(bottomNav);
 
         activeNav = kasirBtn;

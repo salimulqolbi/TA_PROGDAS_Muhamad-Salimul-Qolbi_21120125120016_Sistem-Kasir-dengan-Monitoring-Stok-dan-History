@@ -2,9 +2,9 @@ package com.example.postapp.data;
 
 import com.example.postapp.controller.CartController;
 import com.example.postapp.model.CartItem;
+import com.example.postapp.model.FoodItem;
 import com.example.postapp.model.Item;
 import com.example.postapp.model.TransactionItem;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class AppData {
     static {
         addItem(new Item(generateItemId(), "Pulpen", 3000, 20, "src/main/java/com/example/postapp/images/pulpen.png"));
         addItem(new Item(generateItemId(), "Buku Tulis", 8000, 15, "src/main/java/com/example/postapp/images/buku_tulis.jpeg"));
-        addItem(new Item(generateItemId(), "Air Mineral", 5000, 50, "src/main/java/com/example/postapp/images/air_mineral.jpeg"));
+        addItem(new FoodItem(generateItemId(), "Air Mineral", 5000, 50, "2025-12-31", "src/main/java/com/example/postapp/images/air_mineral.jpeg"));
     }
 
     public static int generateItemId() {

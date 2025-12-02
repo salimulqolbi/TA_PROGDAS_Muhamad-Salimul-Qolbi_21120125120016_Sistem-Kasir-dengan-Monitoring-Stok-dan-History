@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-
 import java.io.File;
 
 public class ManageView {
@@ -41,7 +40,6 @@ public class ManageView {
 
         layout.setTop(topBox);
 
-        // Table
         table = createTable();
         table.setPrefHeight(500);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -49,13 +47,11 @@ public class ManageView {
 
         refreshTable();
 
-        // Letakkan table di tengah
         VBox centerBox = new VBox(table);
         centerBox.setPadding(new Insets(10));
 
         layout.setCenter(centerBox);
 
-        // Form input di kanan
         VBox form = createForm();
         form.setPrefWidth(350);
         layout.setRight(form);
@@ -86,7 +82,32 @@ public class ManageView {
         colDate.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue() instanceof FoodItem ?
                 ((FoodItem) data.getValue()).getExpDate(): "-"));
 
-        tbl.getColumns().addAll(colId, colName, colHarga, colStock, colType, colDate);
+        TableColumn<Item, String> colStatus = new TableColumn<>("Status");
+        colStatus.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(getStatus(data.getValue().getStock())));
+
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+
+                if (empty || status == null) {
+                    setText(null);
+                    setStyle("");
+                    return;
+                }
+
+                setText(status);
+                setStyle("-fx-font-weight: bold; -fx-alignment: CENTER;");
+
+                switch (status) {
+                    case "Habis" -> setStyle(getStyle() + "-fx-text-fill: #dc2626;");
+                    case "Menipis" -> setStyle(getStyle() + "-fx-text-fill: #ea580c;");
+                    default -> setStyle(getStyle() + "-fx-text-fill: #16a34a;");
+                }
+            }
+        });
+
+        tbl.getColumns().addAll(colId, colName, colHarga, colStock, colType, colDate, colStatus);
         tbl.setPrefWidth(600);
 
         return tbl;
@@ -221,5 +242,11 @@ public class ManageView {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.show();
+    }
+
+    private String getStatus(int stock) {
+        if (stock == 0) return "Habis";
+        if (stock < 5) return "Menipis";
+        return "Aman";
     }
 }

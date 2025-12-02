@@ -66,13 +66,8 @@ public class KasirView {
         ImageView imgView;
 
         if (item.getImgPath() != null) {
-            try {
-                Image img = new Image(new File(item.getImgPath()).toURI().toString());
-                imgView = new ImageView(img);
-            } catch (Exception ex) {
-                imgView = new ImageView();
-                imgView.setStyle("-fx-background-color: #e2e8f0;");
-            }
+            Image img = new Image(new File(item.getImgPath()).toURI().toString());
+            imgView = new ImageView(img);
         } else {
             imgView = new ImageView();
             imgView.setStyle("-fx-background-color: #e2e8f0;");
@@ -184,7 +179,6 @@ public class KasirView {
             card.setOpacity(0.5);
             card.setDisable(true);
         }
-        System.out.println("BUILD CARD UNTUK: " + item.getName() + " HASH=" + this.hashCode());
 
         return card;
     }

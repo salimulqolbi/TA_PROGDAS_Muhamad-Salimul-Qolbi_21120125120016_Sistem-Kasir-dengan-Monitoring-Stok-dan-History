@@ -27,10 +27,6 @@ public class Item {
         return stock;
     }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
     public String getImgPath() {
         return imgPath;
     }
