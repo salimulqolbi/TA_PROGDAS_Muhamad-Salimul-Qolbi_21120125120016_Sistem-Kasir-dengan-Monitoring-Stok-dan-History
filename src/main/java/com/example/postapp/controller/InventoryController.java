@@ -23,4 +23,13 @@ public class InventoryController {
     public void deleteItem(int itemId) {
         AppData.removeItem(itemId);
     }
+
+    public void updateStock(int itemId, int newStock) {
+        for (Item item : AppData.getItems()) {
+            if (item.getId() == itemId) {
+                item.setStock(newStock);
+                return;
+            }
+        }
+    }
 }

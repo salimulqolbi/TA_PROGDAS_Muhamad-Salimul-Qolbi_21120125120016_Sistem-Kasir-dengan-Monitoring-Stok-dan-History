@@ -5,6 +5,8 @@ import com.example.postapp.data.AppData;
 import com.example.postapp.model.FoodItem;
 import com.example.postapp.model.Item;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.geometry.Insets;
@@ -13,7 +15,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
+
 import java.io.File;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ManageView {
 
@@ -55,7 +61,6 @@ public class ManageView {
         VBox form = createForm();
         form.setPrefWidth(350);
         layout.setRight(form);
-
     }
 
     private TableView<Item> createTable () {
@@ -107,10 +112,117 @@ public class ManageView {
             }
         });
 
-        tbl.getColumns().addAll(colId, colName, colHarga, colStock, colType, colDate, colStatus);
-        tbl.setPrefWidth(600);
+        TableColumn<Item, Void> colAction = new TableColumn<>("Aksi");
+        colAction.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<Item, Void> call(TableColumn<Item, Void> param) {
+                return new TableCell<>() {
+                    private final HBox buttons = new HBox(5);
+                    private final ImageView editIcon = new ImageView(
+                            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/edit.png")))
+                    );
+                    private final ImageView deleteIcon = new ImageView(
+                            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/delete.png")))
+                    );
+                    private final Button editBtn = new Button("", editIcon);
+                    private final Button deleteBtn = new Button("", deleteIcon);
+
+
+                    {
+                        editIcon.setFitWidth(16);
+                        editIcon.setFitHeight(16);
+                        deleteIcon.setFitWidth(16);
+                        deleteIcon.setFitHeight(16);
+
+                        editBtn.setStyle("-fx-background-color: transparent; -fx-padding: 4;");
+                        deleteBtn.setStyle("-fx-background-color: transparent; -fx-padding: 4;");
+
+                        // efek hover e
+                        editBtn.setOnMouseEntered(e -> editBtn.setStyle("-fx-background-color: #dbeafe; -fx-padding: 4; -fx-border-radius: 4;"));
+                        editBtn.setOnMouseExited(e -> editBtn.setStyle("-fx-background-color: transparent; -fx-padding: 4;"));
+
+                        deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle("-fx-background-color: #fee2e2; -fx-padding: 4; -fx-border-radius: 4;"));
+                        deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle("-fx-background-color: transparent; -fx-padding: 4;"));
+
+
+                        // Edit Stok
+                        editBtn.setOnAction(e -> {
+                            Item item = getTableView().getItems().get(getIndex());
+                            updateStok(item);
+                        });
+
+                        deleteBtn.setOnAction(e -> {
+                            Item item = getTableView().getItems().get(getIndex());
+                            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                            confirm.setTitle("Konfirmasi Hapus");
+                            confirm.setHeaderText(null);
+                            confirm.setContentText("Hapus barang \"" + item.getName() + "\"?");
+
+                            Optional<ButtonType> result = confirm.showAndWait();
+                            if (result.isPresent() && result.get() == ButtonType.OK) {
+                                controller.deleteItem(item.getId());
+                                refreshTable();
+                                showAlert("Barang berhasil dihapus.");
+                            }
+                        });
+
+                        buttons.getChildren().addAll(editBtn, deleteBtn);
+                        buttons.setAlignment(Pos.CENTER);
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setGraphic(empty ? null : buttons);
+                    }
+                };
+            }
+        });
+
+        tbl.getColumns().addAll(colId, colName, colHarga, colStock, colType, colDate, colStatus, colAction);
+        tbl.setPrefWidth(700);
 
         return tbl;
+    }
+
+    private void updateStok(Item item) {
+        Dialog<Integer> dialog = new Dialog<>();
+        dialog.setTitle("Update Stok");
+        dialog.setHeaderText("Update stok untuk: " + item.getName());
+
+        VBox content = new VBox(10);
+        content.setPadding(new Insets(10));
+        Label label = new Label("Stok baru:");
+        TextField stockField = new TextField();
+        stockField.setText(String.valueOf(item.getStock()));
+        content.getChildren().addAll(label, stockField);
+        dialog.getDialogPane().setContent(content);
+
+        ButtonType updateBtn = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(updateBtn, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == updateBtn) {
+                try {
+                    int newStock = Integer.parseInt(stockField.getText());
+                    if (newStock < 0) {
+                        showAlert("Stok tidak boleh negatif!");
+                        return null;
+                    }
+                    return newStock;
+                } catch (NumberFormatException ex) {
+                    showAlert("Masukkan angka valid!");
+                    return null;
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(newStock -> {
+            controller.updateStock(item.getId(), newStock);
+            refreshTable();
+            showAlert("Stok berhasil diupdate!");
+        });
     }
 
     private void refreshTable() {
@@ -118,13 +230,12 @@ public class ManageView {
     }
 
     private VBox createForm() {
-
         VBox form = new VBox(10);
         form.setPadding(new Insets(15));
         form.setPrefWidth(350);
         form.setStyle("-fx-background-color: #f1f5f9;");
 
-        Label formTitle = new Label("Tambah");
+        Label formTitle = new Label("Tambah Barang Baru");
         formTitle.setFont(Font.font(16));
 
         TextField nameField = new TextField();
@@ -190,21 +301,6 @@ public class ManageView {
             }
         });
 
-        Button deleteBtn = new Button("Hapus Barang");
-        deleteBtn.setPrefHeight(35);
-        deleteBtn.setMaxWidth(Double.MAX_VALUE);
-
-        deleteBtn.setOnAction(e -> {
-            Item selected = table.getSelectionModel().getSelectedItem();
-            if (selected == null) {
-                showAlert("Pilih barang yang ingin dihapus!");
-                return;
-            }
-            controller.deleteItem(selected.getId());
-            refreshTable();
-            showAlert("Barang berhasil dihapus.");
-        });
-
         chooseImg.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.getExtensionFilters().add(
@@ -222,7 +318,7 @@ public class ManageView {
                 formTitle,
                 nameField, priceField, stockField, typeBox, expiryPicker,
                 chooseImg, imgLabel,
-                addBtn, deleteBtn
+                addBtn
         );
 
         return form;
