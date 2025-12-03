@@ -279,6 +279,16 @@ public class ManageView {
                 int stock = Integer.parseInt(stockField.getText());
                 boolean isFood = "Food".equals(typeBox.getValue());
 
+                if (price < 0) {
+                    showAlert("Harga tidak boleh angka negatif atau minus");
+                    return;
+                }
+
+                if (stock < 0) {
+                    showAlert("Stock tidak boleh angka negatif atau minus");
+                    return;
+                }
+
                 if (name.isEmpty() || typeBox.getValue() == null) {
                     showAlert("Semua field harus diisi.");
                     return;
@@ -290,6 +300,7 @@ public class ManageView {
                 } else {
                     controller.addItem(name, price, stock, false, null, imgPath[0]);
                 }
+
 
                 refreshTable();
                 clearForm(nameField, priceField, stockField, typeBox, expiryPicker);
